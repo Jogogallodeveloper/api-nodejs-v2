@@ -1,11 +1,12 @@
 //import modules
 import { author } from "../models/author.js";
+import mongoose from "mongoose";
 
 // ✅ GET /author — returns the list of all author in JSON format
 class authorController {
 
     // ✅ methodo get all author
-    static async listAuthor(req, res) {
+    static listAuthor = async (req, res) => {
 
         try {
             const listAuthor = await author.find({});
@@ -23,34 +24,46 @@ class authorController {
     };
 
     // ✅ methodo GET specific author
-    static async listAuthorById(req, res) {
+    static listAuthorById = async (req, res) => {
         try {
-
+            // define the value that will search on mongoDB
             const id = req.params.id
+
+            // ✅ Validate ObjectId format
+            if (!mongoose.Types.ObjectId.isValid(id)) {
+                return res.status(400).json({ message: "❌ Data request not found." });
+            };
 
             const authorResult = await author.findById(id);
 
+            //Validate if exists the Author
+            if (!authorResult) {
+                return res.status(404).json({ message: "❌ Author Not Exists." });
+            }
+
             // console log to print the response from mongo
             console.log("📄 Resultado vindo do Mongo:", authorResult);
-
-            // define the response when its ok
-            res.status(200).json(authorResult);
+            return res.status(200).json(authorResult);
 
         } catch (error) {
-            res.status(500).
-                json({
-                    message: `${error.message}
-                 - ❌ Internal server error while updating the author.` });
+            if (error instanceof mongoose.Error.CastError) {
+            console.error("❌ Error:", error);
+            res.status(400).send({ message: "❌Internal Server Error" });
+            } else {
+                res.status(500).send({message: "Error on Server 02"});
+            }
         }
 
     };
+
+
     // methodo POST to create a specific author
-    static async postAuthor(req, res) {
+    static postAuthor = async (req, res) => {
 
         const { name, nationality } = req.body
 
         // Validação simples
-        if (!name || !nationality ) {
+        if (!name || !nationality) {
             return res.status(400).send("Invalid Author data. 'Name' and 'nationality' are required.");
         }
 
@@ -70,7 +83,7 @@ class authorController {
     };
 
     // methodo PUT a specific Author 
-    static async PutAuthorById(req, res) {
+    static PutAuthorById = async (req, res) => {
         try {
             const id = req.params.id
 
@@ -82,13 +95,13 @@ class authorController {
             // define the response when its ok
             res.status(200).json({ message: "Author updated successfully." });
         } catch (error) {
-            res.status(500).
+            res.status(400).
                 json({ message: `${error.message} - ❌ Internal server error while updating the Author.` });
         }
     };
 
     // methodo DELETE a specific Author 
-    static async DeleteAuthorById(req, res) {
+    static DeleteAuthorById = async (req, res) => {
         try {
             const id = req.params.id;
 

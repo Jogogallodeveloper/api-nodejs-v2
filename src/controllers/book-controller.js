@@ -6,7 +6,7 @@ import book from "../models/book.js";
 class BookController {
 
     // ✅ methodo get all books
-    static async listBooks(req, res) {
+    static listBooks = async (req, res) => {
 
         try {
             const listBooks = await book.find({});
@@ -24,7 +24,7 @@ class BookController {
     };
 
     // ✅ methodo GET specific books
-    static async listBookById(req, res) {
+    static listBookById = async (req, res) => {
         try {
 
             const id = req.params.id
@@ -35,7 +35,7 @@ class BookController {
             // define the response when its ok
             res.status(200).json(bookResult);
         } catch (error) {
-            res.status(500).
+            res.status(400).
                 json({
                     message: `${error.message}
                  - ❌ Internal server error while updating the book.` });
@@ -43,7 +43,7 @@ class BookController {
 
     };
     // methodo POST to create a specific Book
-    static async postbook(req, res) {
+    static postbook = async (req, res) => {
 
         const newBook = req.body
 
@@ -76,7 +76,7 @@ class BookController {
     };
 
     // methodo PUT a specific book 
-    static async PutBookById(req, res) {
+    static PutBookById = async (req, res) => {
         try {
             const id = req.params.id
 
@@ -94,7 +94,7 @@ class BookController {
     };
 
     // methodo DELETE a specific book 
-    static async DeleteBookById(req, res) {
+    static DeleteBookById = async(req, res) => {
         try {
             const id = req.params.id;
 
@@ -118,7 +118,7 @@ class BookController {
     };
 
     // methodo GET by parametre of search
-     static async listBookByPublisher (req, res) {
+     static listBookByPublisher = async (req, res) => {
         const publisher = req.query.publisher;
 
         try {
